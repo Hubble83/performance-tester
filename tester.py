@@ -25,7 +25,7 @@ if "tester.config.py" not in sys.argv[1]:
 
 try:args=open(sys.argv[1],"r").read()
 except:
-	print "Couldn't find tester.config"
+	print "Couldn't find tester.config.py"
 	sys.exit(0)
 try:args=eval(args)
 except:

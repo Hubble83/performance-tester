@@ -80,7 +80,7 @@ for combination in args:
 	for point in xaxe:
 		csv.write(","+point)
 	for curve in curves:
-		csv.write("\n"+curve)
+		csv.write("\n"+curvelabel+curve)
 		for point in xaxe:
 			sp=[]
 			tmp=[]

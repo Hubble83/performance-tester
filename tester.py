@@ -1,5 +1,5 @@
 #import matplotlib
-import itertools, sys, subprocess
+import itertools, sys, subprocess, os
 from datetime import datetime
 
 def kbest (k, values):
@@ -66,7 +66,7 @@ except:pass
 #try:os.makedirs("results/graph")
 #except:pass
 now=str(datetime.now())
-now=now[11:19] + "_" + now[:10]
+now=now[11:19].replace(":","-") + "_" + now[:10]
 try:os.makedirs("results/csv/"+now)
 except:pass
 #try:os.makedirs("results/graph/"+now)
@@ -75,7 +75,7 @@ except:pass
 for combination in args:
 	name="_".join(combination)
 	
-	csv = open("results/csv/"+now+"/"+name+".csv", "r")
+	csv = open("results/csv/"+now+"/"+name+".csv", "w")
 	#graphPath = "results/graph/"+now+"/"+name+".png"
 	for point in xaxe:
 		csv.write(","+point)
@@ -84,23 +84,26 @@ for combination in args:
 		for point in xaxe:
 			sp=[]
 			tmp=[]
-			for repetition in kbest[1]:
-				print count,"of",total,
+			for repetition in range(kbest[1]):
+				print count,"of",total
 				s=datetime.now()
-				count+=1				
-				execution = subprocess.Popen(
-					["./"+combination[0] ]+combination[1:]+[curve, point],
-					stdout=subprocess.PIPE,
-					stderr=subprocess.PIPE
-				) 
-				execution.wait()
-				try:
-					c_printf = execution.stdout.read().decode("ascii").strip()
-					tmp.append(float(c_printf))
+				count+=1
+				try:			
+					execution = subprocess.Popen(
+						["./"+combination[0] ]+combination[1:]+[curve, point],
+						stdout=subprocess.PIPE,
+						stderr=subprocess.PIPE
+					) 
+					execution.wait()
+					try:
+						c_printf = execution.stdout.read().decode("ascii").strip()
+						tmp.append(float(c_printf))
+					except:
+						print "Wrong program output, must be a single integer!"
 				except:
-					print "Wrong program output, must be a single integer!"
+					print "Execution error: check if",combination[0],"exists"
 				e=datetime.now()
-				print "\ttest time:",e-s,"\n"
+				print "Test total time:",e-s,"\n"
 			try:
 				v=kbest(kbest[0],tmp)
 				csv.write("," + str(v) )

@@ -19,11 +19,11 @@ if len(sys.argv) != 2:
 	print "Wrong program call"
 	sys.exit(0)
 
-if "tester.config.py" not in argv[1]:
+if "tester.config.py" not in sys.argv[1]:
 	print "Couldn't find tester.config.py"
 	sys.exit(0)
 
-try:args=open(argv[1],"r").read()
+try:args=open(sys.argv[1],"r").read()
 except:
 	print "Couldn't find tester.config"
 	sys.exit(0)
@@ -63,20 +63,20 @@ try:os.makedirs("results")
 except:pass
 try:os.makedirs("results/csv")
 except:pass
-try:os.makedirs("results/graph")
-except:pass
+#try:os.makedirs("results/graph")
+#except:pass
 now=str(datetime.now())
 now=now[11:19] + "_" + now[:10]
 try:os.makedirs("results/csv/"+now)
 except:pass
-try:os.makedirs("results/graph/"+now)
-except:pass
+#try:os.makedirs("results/graph/"+now)
+#except:pass
 
 for combination in args:
 	name="_".join(combination)
 	
-	csv = open("results/csv/"+now+"/"name+".csv", "r")
-	graphPath = "results/graph/"+now+"/"name+".png"
+	csv = open("results/csv/"+now+"/"+name+".csv", "r")
+	#graphPath = "results/graph/"+now+"/"+name+".png"
 	for point in xaxe:
 		csv.write(","+point)
 	for curve in curves:

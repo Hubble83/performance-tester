@@ -2,7 +2,7 @@
 import itertools, sys, subprocess, os
 from datetime import datetime
 
-def kbest (k, values):
+def getkbest (k, values):
 	error=(1,values[0])
 	values.sort()
 	for i in range(len(values)-k):
@@ -56,39 +56,42 @@ while len(args)>1:
 	args=[args[0]]+args[2:]
 args=args[0]
 
-count=0
+count=1
 total=len(args)*len(curves)*len(xaxe)*kbest[1]
 
 try:os.makedirs("results")
 except:pass
-try:os.makedirs("results/csv")
-except:pass
-#try:os.makedirs("results/graph")
-#except:pass
+
 now=str(datetime.now())
 now=now[11:19].replace(":","-") + "_" + now[:10]
-try:os.makedirs("results/csv/"+now)
-except:pass
-#try:os.makedirs("results/graph/"+now)
-#except:pass
 
+try:os.makedirs("results/"+now)
+except:pass
+
+try:os.makedirs("results/"+now+"/csv")
+except:pass
+#try:os.makedirs("results/"+now+"/graph")
+#except:pass
 for combination in args:
 	name="_".join(combination)
 	
-	csv = open("results/csv/"+now+"/"+name+".csv", "w")
-	#graphPath = "results/graph/"+now+"/"+name+".png"
+	csv = open("results/"+now+"/csv/"+name+".csv", "w")
+	#graphPath = "results/"+now+"/graph/"+name+".png"
 	for point in xaxe:
 		csv.write(","+point)
 	for curve in curves:
 		csv.write("\n"+curvelabel+curve)
 		for point in xaxe:
-			sp=[]
 			tmp=[]
 			for repetition in range(kbest[1]):
-				print count,"of",total
+				print count,"of",total, "["+" ".join(["./"+combination[0] ]+combination[1:]+[curve, point])+"]"
 				s=datetime.now()
 				count+=1
-				try:			
+				try:
+					try:
+						test=int(point)
+						os.environ["OMP_NUM_THREADS"]=point
+					except: pass	
 					execution = subprocess.Popen(
 						["./"+combination[0] ]+combination[1:]+[curve, point],
 						stdout=subprocess.PIPE,
@@ -99,15 +102,15 @@ for combination in args:
 						c_printf = execution.stdout.read().decode("ascii").strip()
 						tmp.append(float(c_printf))
 					except:
-						print "Wrong program output, must be a single integer!"
+						print "Wrong program output. Expected float, got:"
+						print c_printf
 				except:
 					print "Execution error: check if",combination[0],"exists"
 				e=datetime.now()
 				print "Test total time:",e-s,"\n"
 			try:
-				v=kbest(kbest[0],tmp)
+				v=getkbest(kbest[0],tmp)
 				csv.write("," + str(v) )
-				sp.append(v)
 			except:
 				csv.write(",")
 				print "Failed to calculate the kbest of the result values"

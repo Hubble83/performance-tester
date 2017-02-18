@@ -8,7 +8,10 @@ def getkbest (k, values):
 	for i in range(len(values)-k):
 		maximum = values[i+k-1]
 		minimum = values[i]
-		e = (maximum - minimum) / float(maximum) 
+		if maximum == 0:
+			e=0
+		else:
+			e = (maximum - minimum) / float(maximum) 
 		if e < 0.05:
 			return sum(values[i:i+k]) / float(k)
 		if e < error[0]:
@@ -114,4 +117,5 @@ for combination in args:
 			except:
 				csv.write(",")
 				print "Failed to calculate the kbest of the result values"
+				print "Values:",tmp
 	csv.close()

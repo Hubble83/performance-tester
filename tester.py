@@ -15,7 +15,7 @@ def getkbest (k, values):
 		if e < 0.05:
 			return sum(values[i:i+k]) / float(k)
 		if e < error[0]:
-			error=(e,sum(values[error[1]:error[1]+k]) / float(k))
+			error=(e,sum(values[i:i+k]) / float(k))
 	return error[1]
 
 if len(sys.argv) != 2:

@@ -15,24 +15,18 @@
 #############################################################################################
 
 [
-	# [executable_files]
 	[
-		"bin/omp/gnu_4.9.0_02/ep.B.x",
+		"sequential",
+		"omp_active_wait",
+		"omp_mutex",
+		"pthreads_active_wait",
+		"pthreads_mutex"
 	],
-	
-	# optional: pipe the output (CAUTION, NOT SAME AS BASH)
-	# use | for pipes, use space ONLY to separate argumens (not even inside strings) 
-	("pipes", "awk {for(i=1;i<NF;i++){if($i==\"CPU\"){print$4}}}")
-	# {line_label: [line_values]}
-	( "-" : [1] ),
-	# {x_label: [x_values]} -> in openMP must be threads
-	( "Number of threads" : [48]),
-	# "y_label"
+	[4096,65536],
+	{ "Chunk size = " : [2,8,32,128,512,2048] },
+	{ "Number of threads" : range(2,41,2) },
 	"Speedup",
-	# kbest (k,tests)
-	(1,1),
-	# run type ( "serial", "omp", "mpi", ("custom",["./test", "-flag", ...]) )
-	"omp"
+	[3,5]
 ]
 
 #############################################################################################

@@ -105,8 +105,9 @@ else:
 	sys.exit(0)
 
 run = args.pop()
-if type(run) is tuple and len(run)==2 and run[0]=="custom":
-	run = eval()
+try: run = eval(run)
+except:pass
+if type(run) is tuple and len(run)==2 and run[0]=="custom":pass
 elif run in ["serial", "omp", "mpi"]: pass
 else:
 	print "Verify run method, should be:"
@@ -141,7 +142,7 @@ pipes=""
 if type(args[-1]) is tuple and args[-1][0]=="pipes":
 	pipes=args.pop()[1]
 
-dstat=False
+dstat=False	
 if type(args[-1]) is tuple and args[-1][0]=="dstat":
 	dstat=args.pop()[1]
 
@@ -192,7 +193,7 @@ for combination in args:
 				if combination[1:]!=[]: tempstr+=" ".join(combination[1:])
 				if curveuse: tempstr+=" "+curve
 				if xuse: tempstr+=" "+point
-				print count,"of",total, "["+" ".join(["./"+combination[0] ]) + tempstr +pstr+"]"
+				print count,"of",total,
 
 				s=datetime.now()
 				count+=1
@@ -200,28 +201,31 @@ for combination in args:
 				try:
 					ok=True
 					if run in ["seq","omp"]:
+						print "["+" ".join(["./"+combination[0] ]) + tempstr +pstr+"]"
 						executions = ["./"+combination[0] ]
 						if run=="omp":
 							try: os.environ["OMP_NUM_THREADS"]=point
 							except: pass
 
 					elif run == "mpi":
+						print "["+" ".join(["mpirun", "-q", "--map-by", "core", "-np", point, combination[0] ]) + tempstr +pstr+"]"
 						executions = ["mpirun", "-q", "--map-by", "core", "-np", point, combination[0]]
 
 					elif run[0]=="custom":
+						print "["+" ".join(run[1]+[ combination[0] ]) + tempstr +pstr+"]"
 						executions = run[1]+[ combination[0] ]
 
 					else:
 						ok = False
 						print "Wrong program call"
 
-					try:
-						if ok:
+					if ok:
+						try:
 							x = _exec(executions, combination, curve, point)
 							tmp.append( float( x ) )
-					except:
-						raise
-						print "Wrong program output"
+						except:
+							raise
+							print "Wrong program output"
 				except:
 					raise
 					print "Execution error: check if",combination[0],"exists"

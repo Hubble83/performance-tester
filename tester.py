@@ -200,7 +200,7 @@ for combination in args:
 				
 				try:
 					ok=True
-					if run in ["seq","omp"]:
+					if run in ["serial","omp"]:
 						print "["+" ".join(["./"+combination[0] ]) + tempstr +pstr+"]"
 						executions = ["./"+combination[0] ]
 						if run=="omp":
@@ -224,10 +224,8 @@ for combination in args:
 							x = _exec(executions, combination, curve, point)
 							tmp.append( float( x ) )
 						except:
-							raise
 							print "Wrong program output"
 				except:
-					raise
 					print "Execution error: check if",combination[0],"exists"
 
 				e=datetime.now()
